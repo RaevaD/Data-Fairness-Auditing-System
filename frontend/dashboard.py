@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.insert(0, os.path.dirname(__file__))
+
 import streamlit as st
 import requests
 from pages.upload import show_upload_page
@@ -6,6 +10,7 @@ from pages.fairness import show_fairness_page
 from pages.history import show_history_page
 
 st.set_page_config(page_title='Fairness Auditing System', layout='wide')
+
 st.markdown("""
 <style>
     /* Clean typography */
@@ -34,12 +39,6 @@ st.markdown("""
     /* Cleaner sidebar */
     [data-testid="stSidebar"] {
         border-right: 1px solid #2e2e3e;
-    }
-
-    /* Remove red from error buttons — make them look intentional */
-    .stButton > button[kind="primary"] {
-        background: #c0392b;
-        border: none;
     }
 
     /* Progress bars — thinner and cleaner */
@@ -84,20 +83,29 @@ def logout():
 if not st.session_state.logged_in:
     show_upload_page(BASE_URL)
 else:
-    st.sidebar.title('Fairness Auditor')
-    st.sidebar.write(f'Logged in as: {st.session_state.username}')
+    # Styled sidebar header
+    st.sidebar.markdown("## Fairness Auditor")
+    st.sidebar.markdown(
+        f"<small style='color:#888'>Signed in as <strong>{st.session_state.username}</strong></small>",
+        unsafe_allow_html=True
+    )
     st.sidebar.divider()
-    page = st.sidebar.radio('Navigate', 
+
+    page = st.sidebar.radio(
+        'Navigate',
         ['Upload', 'Quality Report', 'Fairness Report', 'History'],
         index=['Upload', 'Quality Report', 'Fairness Report', 'History'].index(
-            {'upload': 'Upload', 'quality': 'Quality Report', 
+            {'upload': 'Upload', 'quality': 'Quality Report',
              'fairness': 'Fairness Report', 'history': 'History'}
             .get(st.session_state.current_page, 'Upload')
         )
     )
-    if st.sidebar.button('Logout'):
+
+    st.sidebar.divider()
+    if st.sidebar.button('Logout', use_container_width=True):
         logout()
         st.rerun()
+
     if page == 'Upload':
         st.session_state.current_page = 'upload'
         show_upload_page(BASE_URL)
