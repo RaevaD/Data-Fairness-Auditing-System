@@ -10,7 +10,7 @@
 
 ## 🎓 Team Members
 
-- **Atharva Dange** (1032221013) - ML Backend & Core Engine (Owner)
+- **Atharva Dange** (1032221013)
 - **Ritika Palai** (1032221042)
 - **Raeva Dashputre** (1032221426)
 - **Khushi Bhangdia** (1032220317)
@@ -46,21 +46,21 @@ This system provides a REST API for:
 ## 🏗️ Architecture
 ```
 ┌─────────────────┐
-│   Frontend      │  ← Your teammates build this
+│   Frontend      │  
 │  (Streamlit/    │
 │    React)       │
 └────────┬────────┘
          │ HTTP
          ▼
 ┌─────────────────┐
-│   Flask API     │  ✅ COMPLETE
+│   Flask API     │  
 │   (Port 5000)   │
 └────────┬────────┘
          │
     ┌────┴────┬──────────┬────────────┐
     ▼         ▼          ▼            ▼
 ┌────────┐ ┌─────┐ ┌──────────┐ ┌─────────┐
-│ Data   │ │ KNN │ │ Fairness │ │ Report  │  ✅ ALL COMPLETE
+│ Data   │ │ KNN │ │ Fairness │ │ Report  │  
 │ Ingest │ │Imput│ │  Audit   │ │   Gen   │
 └────────┘ └─────┘ └──────────┘ └─────────┘
 ```
