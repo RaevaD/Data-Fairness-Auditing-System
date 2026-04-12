@@ -73,7 +73,7 @@ def show_quality_page(BASE_URL):
                 f'{BASE_URL}/api/audit',
                 json={
                     'dataset_id': dataset_id,
-                    'protected_attributes': ['gender', 'race'],
+                    'protected_attributes': ['sex', 'race'],
                     'outcome_attribute': 'income'
                 }
             )
