@@ -3,6 +3,7 @@ Fairness Auditor
 Core engine for dataset fairness auditing
 """
 
+import re
 import pandas as pd
 from typing import Dict, List, Optional
 import logging
@@ -13,180 +14,283 @@ logger = logging.getLogger(__name__)
 
 
 class FairnessAuditor:
-    """Audits datasets for fairness and bias"""
+
+    PROTECTED_ATTRIBUTE_KEYWORDS = {
+        "gender": ["gender", "sex"],
+        "age": ["age", "age_group"],
+        "race": ["race", "ethnicity"],
+        "religion": ["religion"],
+        "caste": ["caste"],
+        "disability": ["disability"],
+        "marital": ["marital"],
+        "nationality": ["nationality"],
+    }
 
     def __init__(self):
         self.metrics = FairnessMetrics()
 
+    # -----------------------------
+    # DETECT PROTECTED ATTRIBUTES
+    # -----------------------------
     def detect_protected_attributes(self, df: pd.DataFrame) -> List[str]:
-        """
-        Detect protected attributes based on column names.
-        Scans every column name for protected keywords as substrings.
-        Case-insensitive.
-        """
-        protected_keywords = [
-            "gender", "sex", "race", "ethnicity", "age",
-            "religion", "disability", "marital", "nationality",
-        ]
-
         detected = []
+
         for col in df.columns:
             col_lower = col.lower()
-            if any(keyword in col_lower for keyword in protected_keywords):
-                detected.append(col)
 
-        logger.info(f"Detected protected attributes: {detected}")
+            for keyword_group in self.PROTECTED_ATTRIBUTE_KEYWORDS.values():
+                if any(
+                    re.search(rf"\b{re.escape(keyword)}\b", col_lower)
+                    for keyword in keyword_group
+                ):
+                    detected.append(col)
+                    break
+
         return detected
 
-    def audit_single(
+    # -----------------------------
+    # ELIGIBILITY CHECK
+    # -----------------------------
+    def evaluate_audit_eligibility(
         self,
         df: pd.DataFrame,
-        protected_attr: str,
-        outcome_attr: str,
-        favorable_outcome=None,
+        user_protected_attrs: Optional[List[str]] = None,
     ) -> Dict:
-        """
-        Audit fairness for one protected attribute against one outcome column.
 
-        If the outcome column is numeric, uses median as threshold —
-        above median = positive outcome.
-        If categorical, uses the most common value as the favorable outcome.
-        """
-        logger.info(f"Running fairness audit for '{protected_attr}' against '{outcome_attr}'")
+        if user_protected_attrs:
+            valid = [a for a in user_protected_attrs if a in df.columns]
 
-        df_copy = df.copy()
+            return {
+                "audit_allowed": len(valid) > 0,
+                "detected_attributes": valid,
+                "source": "manual_override",
+                "message": (
+                    "Manual protected attributes accepted"
+                    if valid else "No valid attributes provided"
+                ),
+            }
 
-        # --- Determine favorable outcome and which column to compare against ---
-        if favorable_outcome is None:
-            if pd.api.types.is_numeric_dtype(df_copy[outcome_attr]):
-                # Numeric outcome: above median is "positive"
-                threshold = df_copy[outcome_attr].median()
-                df_copy["_favorable"] = df_copy[outcome_attr] > threshold
-                outcome_column = "_favorable"
-                favorable_outcome = True
+        auto = self.detect_protected_attributes(df)
+
+        return {
+            "audit_allowed": len(auto) > 0,
+            "detected_attributes": auto,
+            "source": "auto_detected",
+            "message": (
+                "Protected attributes detected"
+                if auto else "No protected attributes found"
+            ),
+        }
+
+    # -----------------------------
+    # SELECT OUTCOME COLUMN
+    # -----------------------------
+    def select_outcome(self, df, protected_attrs):
+
+        numeric_cols = df.select_dtypes(include=["number"]).columns.tolist()
+
+        non_protected_numeric = [
+            col for col in numeric_cols if col not in protected_attrs
+        ]
+
+        if non_protected_numeric:
+            return non_protected_numeric[-1]
+
+        if numeric_cols:
+            return numeric_cols[-1]
+
+        categorical_cols = df.select_dtypes(include=["object"]).columns.tolist()
+
+        non_protected_cat = [
+            col for col in categorical_cols if col not in protected_attrs
+        ]
+
+        if not non_protected_cat:
+            return None
+
+        return max(non_protected_cat, key=lambda c: df[c].nunique())
+
+    # -----------------------------
+    # SINGLE ATTRIBUTE AUDIT
+    # -----------------------------
+    def audit_single(self, df, protected_attr, outcome_attr):
+
+        df = df.copy()
+
+        # -----------------------------
+        # NUMERIC BINNING
+        # -----------------------------
+        if pd.api.types.is_numeric_dtype(df[protected_attr]):
+            try:
+                df[protected_attr] = pd.qcut(
+                    df[protected_attr],
+                    q=2,
+                    duplicates="drop"
+                )
+            except Exception:
+                return {
+                    "protected_attribute": protected_attr,
+                    "error": "Failed to bin numeric attribute"
+                }
+
+        # -----------------------------
+        # OUTCOME HANDLING (FIXED)
+        # -----------------------------
+        if pd.api.types.is_numeric_dtype(df[outcome_attr]):
+            unique_vals = df[outcome_attr].dropna().unique()
+
+            # Binary case
+            if set(unique_vals).issubset({0, 1}):
+                outcome_col = outcome_attr
+                favorable = 1
             else:
-                # Categorical outcome: most common value is "positive"
-                favorable_outcome = df_copy[outcome_attr].mode()[0]
-                outcome_column = outcome_attr
+                threshold = df[outcome_attr].median()
+                df["_fav"] = df[outcome_attr] > threshold
+                outcome_col = "_fav"
+                favorable = True
         else:
-            outcome_column = outcome_attr
+            favorable = df[outcome_attr].mode()[0]
+            outcome_col = outcome_attr
 
-        # Need at least 2 groups to compare
-        groups = df_copy[protected_attr].dropna().unique()
+        # -----------------------------
+        # GROUP DETECTION
+        # -----------------------------
+        groups = df[protected_attr].dropna().unique()
+
         if len(groups) < 2:
             return {
                 "protected_attribute": protected_attr,
-                "error": "At least 2 groups required for fairness audit",
+                "error": "Need at least 2 groups"
             }
 
-        # First group found is treated as privileged, second as unprivileged.
-        # For a proper audit the user can specify these explicitly.
-        privileged_group = groups[0]
-        unprivileged_group = groups[1]
+        # -----------------------------
+        # RATE CALCULATION
+        # -----------------------------
+        rates = {}
 
-        di_result = self.metrics.disparate_impact(
-            df_copy, protected_attr, outcome_column,
-            favorable_outcome, privileged_group, unprivileged_group,
+        for g in groups:
+            mask = df[protected_attr] == g
+            total = mask.sum()
+
+            positive = (
+                df.loc[mask, outcome_col] == favorable
+            ).sum()
+
+            rates[g] = positive / total if total > 0 else 0
+
+        privileged = max(rates, key=rates.get)
+        unprivileged = min(rates, key=rates.get)
+
+        # -----------------------------
+        # EDGE CASE: SAME RATES
+        # -----------------------------
+        if privileged == unprivileged:
+            return {
+                "protected_attribute": protected_attr,
+                "outcome_attribute": outcome_attr,
+                "message": "All groups have equal outcome rates",
+                "disparate_impact": 1.0,
+                "demographic_parity": 0.0,
+                "spd": 0.0,
+                "is_fair": True,
+                "verdict": "FAIR",
+            }
+
+        # -----------------------------
+        # METRICS
+        # -----------------------------
+        di = self.metrics.disparate_impact(
+            df,
+            protected_attr,
+            outcome_col,
+            favorable,
+            privileged,
+            unprivileged
         )
 
-        dp_result = self.metrics.demographic_parity(
-            df_copy, protected_attr, outcome_column, favorable_outcome,
+        dp = self.metrics.demographic_parity(
+            df,
+            protected_attr,
+            outcome_col,
+            favorable
         )
 
-        spd_result = self.metrics.statistical_parity_difference(
-            df_copy, protected_attr, outcome_column,
-            favorable_outcome, privileged_group,
+        spd = self.metrics.statistical_parity_difference(
+            df,
+            protected_attr,
+            outcome_col,
+            favorable,
+            privileged
         )
 
-        # FAIR if at least one of the two primary metrics passes
-        is_fair = di_result["is_fair"] or dp_result["is_fair"]
+        # -----------------------------
+        # SPD CHECK
+        # -----------------------------
+        spd_value = spd.get("statistical_parity_difference")
+
+        if spd_value is None:
+            spd_is_fair = False
+        else:
+            spd_is_fair = abs(spd_value) <= 0.1
+
+        # -----------------------------
+        # FINAL FAIRNESS
+        # -----------------------------
+        is_fair = (
+            di["is_fair"]
+            and dp["is_fair"]
+            and spd_is_fair
+        )
 
         return {
             "protected_attribute": protected_attr,
             "outcome_attribute": outcome_attr,
-            "disparate_impact": di_result.get("disparate_impact_score"),
-            "demographic_parity": dp_result.get("parity_difference"),
-            "spd": spd_result.get("statistical_parity_difference"),
+            "privileged_group": str(privileged),
+            "unprivileged_group": str(unprivileged),
+            "disparate_impact": di["disparate_impact_score"],
+            "demographic_parity": dp["parity_difference"],
+            "spd": spd_value,
             "is_fair": is_fair,
-            "verdict": "FAIR" if is_fair else "UNFAIR — Bias Detected",
+            "verdict": "FAIR" if is_fair else "UNFAIR",
         }
 
-    def audit_all(
-        self,
-        df: pd.DataFrame,
-        protected_attrs: Optional[List[str]] = None,
-        outcome_attr: Optional[str] = None,
-    ) -> Dict:
-        """
-        Audit all detected or provided protected attributes.
+    # -----------------------------
+    # FULL AUDIT
+    # -----------------------------
+    def audit_all(self, df, protected_attrs=None, outcome_attr=None):
 
-        If protected_attrs is None, auto-detects from column names.
-        If outcome_attr is None, auto-selects the best numeric column —
-        specifically avoids picking a column that is itself a protected
-        attribute (e.g. avoids auditing 'age' against 'age').
-        """
-        if protected_attrs is None:
-            protected_attrs = self.detect_protected_attributes(df)
+        eligibility = self.evaluate_audit_eligibility(df, protected_attrs)
 
-        if not protected_attrs:
-            return {"error": "No protected attributes detected"}
+        if not eligibility["audit_allowed"]:
+            return {
+                "error": "No protected attributes found",
+                "audit_allowed": False,
+                "detected_attributes": [],
+            }
+
+        protected_attrs = eligibility["detected_attributes"]
 
         if outcome_attr is None:
-            numeric_cols = df.select_dtypes(include=["number"]).columns.tolist()
+            outcome_attr = self.select_outcome(df, protected_attrs)
 
-            if not numeric_cols:
-                return {"error": "No numeric outcome column found"}
-
-            # Filter out columns that are also protected attributes —
-            # we don't want to audit 'age' against itself as the outcome.
-            protected_keywords = [
-                'gender', 'sex', 'race', 'ethnicity', 'age',
-                'religion', 'disability', 'marital', 'nationality'
-            ]
-            non_protected_numeric = [
-                col for col in numeric_cols
-                if not any(kw in col.lower() for kw in protected_keywords)
-            ]
-
-            # Prefer last non-protected numeric column.
-            # Fall back to last numeric column if all numeric cols are protected.
-            outcome_attr = non_protected_numeric[-1] if non_protected_numeric else numeric_cols[-1]
-            logger.info(f"Auto-selected outcome column: '{outcome_attr}'")
-
-        # Confirm outcome column exists
-        if outcome_attr not in df.columns:
+        if outcome_attr is None or outcome_attr not in df.columns:
             return {
-                "error": f"Outcome column '{outcome_attr}' not found. "
-                         f"Available: {df.columns.tolist()}"
+                "error": "No valid outcome column found",
+                "audit_allowed": False,
             }
 
         results = {}
+
         for attr in protected_attrs:
-            if attr not in df.columns:
-                results[attr] = {"error": f"Column '{attr}' not found in dataset"}
-                continue
-            results[attr] = self.audit_single(df, attr, outcome_attr)
+            results[attr] = self.audit_single(
+                df,
+                attr,
+                outcome_attr
+            )
 
-        return results
-
-    def generate_report(self, results: Dict) -> str:
-        """
-        Generate a simple readable text report from audit results.
-        """
-        lines = []
-        lines.append("=" * 60)
-        lines.append("FAIRNESS AUDIT REPORT")
-        lines.append("=" * 60)
-
-        for attr, result in results.items():
-            lines.append(f"\nProtected Attribute: {attr}")
-            if "error" in result:
-                lines.append(f"  Error: {result['error']}")
-            else:
-                lines.append(f"  Verdict:            {result.get('verdict')}")
-                lines.append(f"  Disparate Impact:   {result.get('disparate_impact')}")
-                lines.append(f"  Demographic Parity: {result.get('demographic_parity')}")
-                lines.append(f"  SPD:                {result.get('spd')}")
-
-        lines.append("\n" + "=" * 60)
-        return "\n".join(lines)
+        return {
+            "audit_allowed": True,
+            "detected_attributes": protected_attrs,
+            "outcome_attribute": outcome_attr,
+            "results": results,
+        }
