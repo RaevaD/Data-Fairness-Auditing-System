@@ -3,7 +3,7 @@ API Routes
 DB-first logic + conditional pipeline (Phase 3 FINAL)
 """
 
-from flask import Blueprint, request, jsonify, session
+from flask import Blueprint, request, jsonify, session, current_app
 from werkzeug.utils import secure_filename
 import numpy as np
 import pandas as pd
@@ -102,7 +102,11 @@ def upload_file():
         dataset_id = str(uuid.uuid4())
         filename = secure_filename(file.filename)
 
-        file_path = Path("data/raw") / f"{dataset_id}_{filename}"
+        # FIX: Use absolute path from app config instead of a relative path,
+        # so uploads work regardless of what directory the server is launched from.
+        upload_folder = Path(current_app.config["UPLOAD_FOLDER"])
+        upload_folder.mkdir(parents=True, exist_ok=True)
+        file_path = upload_folder / f"{dataset_id}_{filename}"
         file.save(str(file_path))
 
         ingestion = DataIngestion()

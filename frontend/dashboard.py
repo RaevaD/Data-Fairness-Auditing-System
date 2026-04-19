@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 import streamlit as st
 import requests
-from pages.upload import show_upload_page
+from pages.upload import show_landing_page, show_login_page, show_register_page, show_upload_page
 from pages.quality import show_quality_page
 from pages.fairness import show_fairness_page
 from pages.history import show_history_page
@@ -275,8 +275,10 @@ if 'fairness_result' not in st.session_state:
     st.session_state.fairness_result = None
 if 'explanation_result' not in st.session_state:
     st.session_state.explanation_result = None
+if 'no_protected_attrs' not in st.session_state:
+    st.session_state.no_protected_attrs = False
 if 'current_page' not in st.session_state:
-    st.session_state.current_page = 'upload'
+    st.session_state.current_page = 'landing'
 if 'api_session' not in st.session_state:
     st.session_state.api_session = requests.Session()
 
@@ -286,7 +288,12 @@ def logout():
         del st.session_state[key]
 
 if not st.session_state.logged_in:
-    show_upload_page(BASE_URL)
+    if st.session_state.current_page == 'login':
+        show_login_page(BASE_URL)
+    elif st.session_state.current_page == 'register':
+        show_register_page(BASE_URL)
+    else:
+        show_landing_page()
 else:
     st.sidebar.markdown(
         "<p style='font-family:Syne,sans-serif; font-size:16px; font-weight:700; color:#ff6f00; margin-bottom:2px;'>Fairness Auditor</p>",
