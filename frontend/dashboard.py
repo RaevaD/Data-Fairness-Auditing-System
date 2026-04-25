@@ -8,6 +8,7 @@ from pages.upload import show_landing_page, show_login_page, show_register_page,
 from pages.quality import show_quality_page
 from pages.fairness import show_fairness_page
 from pages.history import show_history_page
+from pages.info import show_info_page
 
 st.set_page_config(page_title='Fairness Auditing System', layout='wide')
 
@@ -80,6 +81,7 @@ p, li, span, div {
     color: #ff6f00 !important;
 }
 
+/* Default button — outline orange */
 .stButton > button {
     font-family: 'Syne', sans-serif !important;
     font-weight: 600 !important;
@@ -94,6 +96,37 @@ p, li, span, div {
 .stButton > button:hover {
     background: #ff6f00 !important;
     color: #030303 !important;
+}
+
+/* Auth buttons — filled solid orange */
+div.auth-buttons .stButton > button {
+    background: #ff6f00 !important;
+    color: #030303 !important;
+    border: none !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    border-radius: 6px !important;
+}
+div.auth-buttons .stButton > button:hover {
+    background: #cc5a00 !important;
+    color: #030303 !important;
+}
+
+/* Learn more buttons — subtle ghost */
+div.learn-more-btn .stButton > button {
+    background: transparent !important;
+    color: #444 !important;
+    border: 1px solid #1a1a1a !important;
+    font-size: 11px !important;
+    font-weight: 400 !important;
+    letter-spacing: 0.5px !important;
+    padding: 0.3rem 0.8rem !important;
+    border-radius: 4px !important;
+}
+div.learn-more-btn .stButton > button:hover {
+    border-color: #444 !important;
+    color: #888 !important;
+    background: transparent !important;
 }
 
 .stProgress > div > div {
@@ -292,6 +325,14 @@ if not st.session_state.logged_in:
         show_login_page(BASE_URL)
     elif st.session_state.current_page == 'register':
         show_register_page(BASE_URL)
+    elif st.session_state.current_page == 'info_quality':
+        show_info_page('quality')
+    elif st.session_state.current_page == 'info_fairness':
+        show_info_page('fairness')
+    elif st.session_state.current_page == 'info_ai':
+        show_info_page('ai')
+    elif st.session_state.current_page == 'info_history':
+        show_info_page('history')
     else:
         show_landing_page()
 else:

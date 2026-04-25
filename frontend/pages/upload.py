@@ -19,41 +19,84 @@ def show_landing_page():
             <div style="margin-bottom:1.5rem;">
                 <div style="font-family:'DM Mono',monospace; font-size:10px; color:#ff6f00; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px;">What this does</div>
                 <p style="font-size:14px; color:#ffffff; line-height:1.7;">
-                    Upload any CSV or Excel dataset. The system scores it across 4 quality dimensions, 
-                    audits it for algorithmic bias against protected demographic groups, and generates 
+                    Upload any CSV or Excel dataset. The system scores it across 4 quality dimensions,
+                    audits it for algorithmic bias against protected demographic groups, and generates
                     a plain English AI explanation using Claude.
                 </p>
             </div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                <div style="background:#030303; border:1px solid #1a1a1a; border-left:3px solid #ff6f00; border-radius:6px; padding:12px;">
-                    <div style="font-family:'DM Mono',monospace; font-size:10px; color:#ff6f00; margin-bottom:4px;">QUALITY SCORING</div>
-                    <div style="font-size:12px; color:#888;">Completeness, Validity, Consistency, Uniqueness</div>
-                </div>
-                <div style="background:#030303; border:1px solid #1a1a1a; border-left:3px solid #db1886; border-radius:6px; padding:12px;">
-                    <div style="font-family:'DM Mono',monospace; font-size:10px; color:#db1886; margin-bottom:4px;">FAIRNESS AUDIT</div>
-                    <div style="font-size:12px; color:#888;">Disparate Impact, Demographic Parity, SPD</div>
-                </div>
-                <div style="background:#030303; border:1px solid #1a1a1a; border-left:3px solid #608ec7; border-radius:6px; padding:12px;">
-                    <div style="font-family:'DM Mono',monospace; font-size:10px; color:#608ec7; margin-bottom:4px;">AI EXPLANATION</div>
-                    <div style="font-size:12px; color:#888;">Plain English report with action items</div>
-                </div>
-                <div style="background:#030303; border:1px solid #1a1a1a; border-left:3px solid #ffffff; border-radius:6px; padding:12px;">
-                    <div style="font-family:'DM Mono',monospace; font-size:10px; color:#ffffff; margin-bottom:4px;">AUDIT HISTORY</div>
-                    <div style="font-size:12px; color:#888;">Track all previous dataset audits</div>
-                </div>
-            </div>
+            <p style="font-family:'DM Mono',monospace; font-size:10px; color:#444; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Click any card to learn more</p>
         </div>
         """, unsafe_allow_html=True)
 
+        c1, c2 = st.columns(2)
+        with c1:
+            st.markdown("""
+            <div style="background:#030303; border:1px solid #1a1a1a; border-left:3px solid #ff6f00; border-radius:6px; padding:12px; margin-bottom:4px;">
+                <div style="font-family:'DM Mono',monospace; font-size:10px; color:#ff6f00; margin-bottom:4px;">QUALITY SCORING</div>
+                <div style="font-size:12px; color:#888;">Completeness, Validity, Consistency, Uniqueness</div>
+            </div>
+            """, unsafe_allow_html=True)
+            st.markdown('<div class="learn-more-btn">', unsafe_allow_html=True)
+            if st.button('Learn more', key='info_quality', use_container_width=True):
+                st.session_state.current_page = 'info_quality'
+                st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            st.markdown("<div style='margin-top:12px;'></div>", unsafe_allow_html=True)
+
+            st.markdown("""
+            <div style="background:#030303; border:1px solid #1a1a1a; border-left:3px solid #608ec7; border-radius:6px; padding:12px; margin-bottom:4px;">
+                <div style="font-family:'DM Mono',monospace; font-size:10px; color:#608ec7; margin-bottom:4px;">AI EXPLANATION</div>
+                <div style="font-size:12px; color:#888;">Plain English report with action items</div>
+            </div>
+            """, unsafe_allow_html=True)
+            st.markdown('<div class="learn-more-btn">', unsafe_allow_html=True)
+            if st.button('Learn more', key='info_ai', use_container_width=True):
+                st.session_state.current_page = 'info_ai'
+                st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        with c2:
+            st.markdown("""
+            <div style="background:#030303; border:1px solid #1a1a1a; border-left:3px solid #db1886; border-radius:6px; padding:12px; margin-bottom:4px;">
+                <div style="font-family:'DM Mono',monospace; font-size:10px; color:#db1886; margin-bottom:4px;">FAIRNESS AUDIT</div>
+                <div style="font-size:12px; color:#888;">Disparate Impact, Demographic Parity, SPD</div>
+            </div>
+            """, unsafe_allow_html=True)
+            st.markdown('<div class="learn-more-btn">', unsafe_allow_html=True)
+            if st.button('Learn more', key='info_fairness', use_container_width=True):
+                st.session_state.current_page = 'info_fairness'
+                st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            st.markdown("<div style='margin-top:12px;'></div>", unsafe_allow_html=True)
+
+            st.markdown("""
+            <div style="background:#030303; border:1px solid #1a1a1a; border-left:3px solid #ffffff; border-radius:6px; padding:12px; margin-bottom:4px;">
+                <div style="font-family:'DM Mono',monospace; font-size:10px; color:#ffffff; margin-bottom:4px;">AUDIT HISTORY</div>
+                <div style="font-size:12px; color:#888;">Track all previous dataset audits</div>
+            </div>
+            """, unsafe_allow_html=True)
+            st.markdown('<div class="learn-more-btn">', unsafe_allow_html=True)
+            if st.button('Learn more', key='info_history', use_container_width=True):
+                st.session_state.current_page = 'info_history'
+                st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
         col_a, col_b = st.columns(2)
         with col_a:
+            st.markdown('<div class="auth-buttons">', unsafe_allow_html=True)
             if st.button('Login', use_container_width=True):
                 st.session_state.current_page = 'login'
                 st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
         with col_b:
+            st.markdown('<div class="auth-buttons">', unsafe_allow_html=True)
             if st.button('Register', use_container_width=True):
                 st.session_state.current_page = 'register'
                 st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
 
 
 def show_login_page(BASE_URL):
@@ -71,6 +114,7 @@ def show_login_page(BASE_URL):
         username = st.text_input('Username', placeholder='Enter username')
         password = st.text_input('Password', type='password', placeholder='Enter password')
 
+        st.markdown('<div class="auth-buttons">', unsafe_allow_html=True)
         if st.button('Login', use_container_width=True):
             if not username or not password:
                 st.error('Please enter both username and password.')
@@ -89,6 +133,7 @@ def show_login_page(BASE_URL):
                         st.error('Login failed. Check your credentials.')
                 except Exception:
                     st.error('Cannot connect to server. Make sure the backend is running.')
+        st.markdown('</div>', unsafe_allow_html=True)
 
         st.markdown("<br>", unsafe_allow_html=True)
         if st.button('Back to Home', use_container_width=True):
@@ -111,6 +156,7 @@ def show_register_page(BASE_URL):
         username = st.text_input('Username', placeholder='Choose a username')
         password = st.text_input('Password', type='password', placeholder='Choose a password')
 
+        st.markdown('<div class="auth-buttons">', unsafe_allow_html=True)
         if st.button('Create Account', use_container_width=True):
             if not username or not password:
                 st.error('Please fill in both fields.')
@@ -135,6 +181,7 @@ def show_register_page(BASE_URL):
                         st.error(f'Registration failed: {res.json().get("error", "Unknown error")}')
                 except Exception:
                     st.error('Cannot connect to server. Make sure the backend is running.')
+        st.markdown('</div>', unsafe_allow_html=True)
 
         st.markdown("<br>", unsafe_allow_html=True)
         if st.button('Back to Home', use_container_width=True):
