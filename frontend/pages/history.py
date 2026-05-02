@@ -1,3 +1,4 @@
+from fairlearn import datasets
 import streamlit as st
 import pandas as pd
 
@@ -24,6 +25,11 @@ def show_history_page(BASE_URL):
     st.divider()
 
     # Clean table
+    for ds in datasets:
+        stats = ds.get('stats_report') or {}
+        ds['total_rows'] = stats.get('total_rows', 'N/A')
+        ds['total_columns'] = stats.get('total_columns', 'N/A')
+
     df = pd.DataFrame(datasets)[['filename', 'total_rows', 'total_columns', 'processed']]
     df.columns = ['Filename', 'Rows', 'Columns', 'Processed']
     df['Processed'] = df['Processed'].map({True: 'Yes', False: 'No'})
