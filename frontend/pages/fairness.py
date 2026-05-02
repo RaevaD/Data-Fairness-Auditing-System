@@ -38,7 +38,6 @@ def show_fairness_page(BASE_URL):
             st.info(explanation['quality_summary']['explanation'])
         return
 
-<<<<<<< HEAD
     # Show outcome column used
     outcome_col = fairness_data.get('outcome_attribute')
     if outcome_col:
@@ -53,8 +52,6 @@ def show_fairness_page(BASE_URL):
         s3.metric('Unfair', summary.get('unfair_attributes', 0))
         st.divider()
 
-=======
->>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
     # Render per-attribute results
     for attribute, results in audit.items():
 
@@ -68,13 +65,10 @@ def show_fairness_page(BASE_URL):
             col_a, col_b = st.columns([4, 1])
             with col_a:
                 st.subheader(attribute.capitalize())
-<<<<<<< HEAD
                 priv = results.get('privileged_group')
                 unpriv = results.get('unprivileged_group')
                 if priv and unpriv:
                     st.caption(f'Privileged: {priv} · Unprivileged: {unpriv}')
-=======
->>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
             with col_b:
                 if results.get('is_fair', False):
                     st.success('FAIR')
@@ -88,21 +82,13 @@ def show_fairness_page(BASE_URL):
 
             if di is not None:
                 col1.metric('Disparate Impact', round(di, 3),
-<<<<<<< HEAD
                             help='Threshold: 0.8 or above is fair (80% rule, EEOC).')
-=======
-                            help='Threshold: 0.8 or above is fair.')
->>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
             if dp is not None:
                 col2.metric('Demographic Parity', round(dp, 3),
                             help='Threshold: 0.1 or below is fair.')
             if spd is not None:
                 col3.metric('SPD', round(spd, 3),
-<<<<<<< HEAD
                             help='Statistical Parity Difference: close to 0 is fair (range: -0.1 to 0.1).')
-=======
-                            help='Close to 0 is fair.')
->>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 
             if di is not None:
                 THRESHOLD_DI = 0.8
@@ -133,11 +119,7 @@ def show_fairness_page(BASE_URL):
                 progress_spd = min(abs_spd, 1.0)
                 is_fair_spd = abs_spd <= THRESHOLD_SPD
                 sign_str = f'+{round(spd, 3)}' if spd > 0 else str(round(spd, 3))
-<<<<<<< HEAD
                 st.write(f'Statistical Parity Difference — fair if within ±{THRESHOLD_SPD}')
-=======
-                st.write(f'Statistical Parity Difference — fair if within {THRESHOLD_SPD}')
->>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
                 st.progress(progress_spd)
                 if is_fair_spd:
                     st.caption(f'{sign_str} — Within the fairness threshold.')
@@ -145,19 +127,11 @@ def show_fairness_page(BASE_URL):
                     st.caption(f'{sign_str} — Exceeds fairness threshold. Bias detected.')
 
     st.divider()
-<<<<<<< HEAD
     show_explanation = st.toggle('Show AI Explanation & Remediation Plan')
 
     if show_explanation:
         if not st.session_state.explanation_result:
             with st.spinner('Generating AI explanation and remediation plan... this may take 10–20 seconds.'):
-=======
-    show_explanation = st.toggle('Show AI Explanation')
-
-    if show_explanation:
-        if not st.session_state.explanation_result:
-            with st.spinner('Generating AI explanation...'):
->>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
                 res = st.session_state.api_session.post(
                     f'{BASE_URL}/api/explain',
                     json={'dataset_id': st.session_state.dataset_id}
@@ -168,7 +142,6 @@ def show_fairness_page(BASE_URL):
                 st.error('Could not generate explanation. Check your API key in the .env file.')
                 return
 
-<<<<<<< HEAD
         exp_data = st.session_state.explanation_result
         explanation = exp_data.get('explanation', {})
         remediation = exp_data.get('remediation_plan', {})
@@ -230,10 +203,3 @@ def show_fairness_page(BASE_URL):
                         st.markdown(f"**Fix:** {item.get('fix', '')}")
                         if item.get('verification'):
                             st.caption(f"Verification: {item['verification']}")
-=======
-        explanation = st.session_state.explanation_result['explanation']
-        st.subheader('Quality Summary')
-        st.info(explanation['quality_summary']['explanation'])
-        st.subheader('Fairness Analysis & Action Items')
-        st.info(explanation['fairness_summary']['explanation'])
->>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
