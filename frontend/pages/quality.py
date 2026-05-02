@@ -1,7 +1,10 @@
 import streamlit as st
 
+<<<<<<< HEAD
 import streamlit as st
 
+=======
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 def show_quality_page(BASE_URL):
     st.title('Data Quality Report')
     st.caption(f'Dataset: {st.session_state.dataset_id[:8]}...' if st.session_state.dataset_id else '')
@@ -68,6 +71,7 @@ def show_quality_page(BASE_URL):
     else:
         st.warning(dq['recommendation'])
 
+<<<<<<< HEAD
     # --- Fairness Audit Section ---
     st.divider()
     st.subheader('Run Fairness Audit')
@@ -130,3 +134,22 @@ def show_quality_page(BASE_URL):
                 st.info(f"Available columns: {', '.join(err['available_columns'])}")
             if 'next_step' in err:
                 st.info(f"Required next step: {err['next_step']}")
+=======
+    if st.button('Run Fairness Audit →'):
+        dataset_id = st.session_state.dataset_id
+        with st.spinner('Running fairness audit...'):
+            res = st.session_state.api_session.post(
+                f'{BASE_URL}/api/audit',
+                json={
+                    'dataset_id': dataset_id,
+                    'protected_attributes': ['sex', 'race'],
+                    'outcome_attribute': 'income'
+                }
+            )
+        if res.status_code == 200:
+            st.session_state.fairness_result = res.json()
+            st.success('Audit complete! Go to Fairness Report in the sidebar.')
+        else:
+            st.error(f'Fairness audit failed. Status: {res.status_code}')
+            st.json(res.json())
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4

@@ -3,7 +3,11 @@ API Routes
 DB-first logic + conditional pipeline (FIXED: outcome column consistency)
 """
 
+<<<<<<< HEAD
 from flask import Blueprint, request, jsonify
+=======
+from flask import Blueprint, request, jsonify, session
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 from werkzeug.utils import secure_filename
 import numpy as np
 import pandas as pd
@@ -23,10 +27,15 @@ logger = logging.getLogger(__name__)
 api_bp = Blueprint("api", __name__)
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 def get_current_user_id():
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
         return None
+<<<<<<< HEAD
 
     token = auth_header.split(" ")[1]
     payload = decode_token(token)
@@ -34,6 +43,15 @@ def get_current_user_id():
     if not payload:
         return None
 
+=======
+    
+    token = auth_header.split(" ")[1]
+    payload = decode_token(token)
+    
+    if not payload:
+        return None
+    
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
     return payload.get("user_id")
 
 
@@ -88,7 +106,11 @@ def get_dataframe(report_obj):
     return ingestion.preprocess_dataset(df_raw)
 
 
+<<<<<<< HEAD
 # ------------------ UPLOAD (with Phase 2 semantic analysis) ------------------
+=======
+# ------------------ UPLOAD (UPDATED WITH PHASE 2) ------------------
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 
 @api_bp.route("/upload", methods=["POST"])
 def upload_file():
@@ -124,7 +146,11 @@ def upload_file():
         df = ingestion.preprocess_dataset(df_raw)
         stats = convert_numpy_types(ingestion.get_basic_stats(df))
 
+<<<<<<< HEAD
         # Phase 2: Run semantic column analysis via Gemini
+=======
+        # ✅ PHASE 2: Run semantic column analysis
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
         explainer = AIExplainer()
         semantic_analysis = convert_numpy_types(
             explainer.analyze_column_semantics(df)
@@ -136,7 +162,11 @@ def upload_file():
             file_path=str(file_path),
             user_id=current_user_id,
             stats_report=stats,
+<<<<<<< HEAD
             semantic_analysis=semantic_analysis
+=======
+            semantic_analysis=semantic_analysis  # NEW FIELD
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
         )
 
         db.session.add(report)
@@ -146,7 +176,11 @@ def upload_file():
             "dataset_id": dataset_id,
             "filename": filename,
             "stats": stats,
+<<<<<<< HEAD
             "semantic_analysis": semantic_analysis
+=======
+            "semantic_analysis": semantic_analysis  # RETURNED TO FRONTEND
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
         }), 200
 
     except Exception as e:
@@ -199,7 +233,11 @@ def get_quality(dataset_id):
         return jsonify({"error": str(e)}), 500
 
 
+<<<<<<< HEAD
 # ------------------ AUDIT (FIXED: outcome column handling + validation) ------------------
+=======
+# ------------------ AUDIT (FIXED: Outcome column handling) ------------------
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 
 @api_bp.route("/audit", methods=["POST"])
 def audit_dataset():
@@ -226,17 +264,28 @@ def audit_dataset():
 
         df = get_dataframe(report_obj)
 
+<<<<<<< HEAD
         # Accept both field names from the frontend
         outcome_attr = data.get("outcome_attribute") or data.get("outcome_column")
 
         # Fall back to semantic analysis if not provided in request
+=======
+        # 🔧 FIX: Get outcome column from request or semantic analysis
+        outcome_attr = data.get("outcome_attribute") or data.get("outcome_column")
+        
+        # If still not provided, try semantic analysis
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
         if not outcome_attr and report_obj.semantic_analysis:
             outcome_variables = report_obj.semantic_analysis.get("outcome_variables", [])
             if outcome_variables:
                 outcome_attr = outcome_variables[0]
                 logger.info(f"Using outcome column from semantic analysis: {outcome_attr}")
 
+<<<<<<< HEAD
         # Validate the column actually exists in the dataset
+=======
+        # 🔧 CRITICAL: Validate outcome column exists in dataset
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
         if outcome_attr and outcome_attr not in df.columns:
             return jsonify({
                 "error": f"Outcome column '{outcome_attr}' not found in dataset",
@@ -250,6 +299,10 @@ def audit_dataset():
         )
 
         report_obj.fairness_report = fairness_result
+<<<<<<< HEAD
+=======
+        report_obj.processed = True
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 
         db.session.commit()
 
@@ -264,7 +317,11 @@ def audit_dataset():
         return jsonify({"error": str(e)}), 500
 
 
+<<<<<<< HEAD
 # ------------------ EXPLAIN (Phase 3: explanation + remediation, sets processed=True) ------------------
+=======
+# ------------------ EXPLAIN (FIXED: Pass stored outcome column) ------------------
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 
 @api_bp.route("/explain", methods=["POST"])
 def explain_results():
@@ -276,6 +333,7 @@ def explain_results():
         if error:
             return jsonify(error), status
 
+<<<<<<< HEAD
         if report_obj.explanation_report:
             return jsonify({
                 "dataset_id": dataset_id,
@@ -284,6 +342,8 @@ def explain_results():
                 "message": "Loaded from DB"
             }), 200
 
+=======
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
         if not report_obj.quality_report:
             return jsonify({
                 "error": "Quality analysis required before explanation",
@@ -296,6 +356,7 @@ def explain_results():
                 "next_step": "/api/audit"
             }), 400
 
+<<<<<<< HEAD
         # Reload dataframe to build dataset_info for remediation
         df = get_dataframe(report_obj)
 
@@ -304,15 +365,33 @@ def explain_results():
         if report_obj.fairness_report:
             outcome_column = report_obj.fairness_report.get("outcome_attribute")
 
+=======
+        # Reload dataframe to get dataset info
+        df = get_dataframe(report_obj)
+        
+        # 🔧 FIX: Get outcome column from fairness_report (source of truth)
+        outcome_column = None
+        if report_obj.fairness_report:
+            outcome_column = report_obj.fairness_report.get("outcome_attribute")
+        
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
         dataset_info = {
             "rows": len(df),
             "columns": len(df.columns),
             "column_names": list(df.columns),
+<<<<<<< HEAD
             "outcome_column": outcome_column
+=======
+            "outcome_column": outcome_column  # 🔧 NEW: Pass to remediation plan
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
         }
 
         explainer = AIExplainer()
 
+<<<<<<< HEAD
+=======
+        # Generate standard explanation
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
         explanation = convert_numpy_types(
             explainer.generate_full_report(
                 report_obj.quality_report,
@@ -320,7 +399,11 @@ def explain_results():
             )
         )
 
+<<<<<<< HEAD
         # Phase 3: Generate remediation plan with correct outcome column
+=======
+        # ✅ PHASE 3: Generate remediation plan with correct outcome column
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
         remediation_plan = convert_numpy_types(
             explainer.generate_remediation_plan(
                 report_obj.quality_report,
@@ -329,11 +412,17 @@ def explain_results():
             )
         )
 
+<<<<<<< HEAD
         # Store both and mark full pipeline complete
         report_obj.explanation_report = explanation
         report_obj.remediation_plan = remediation_plan
         report_obj.processed = True
 
+=======
+        # Store both
+        report_obj.explanation_report = explanation
+        report_obj.remediation_plan = remediation_plan
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
         db.session.commit()
 
         return jsonify({

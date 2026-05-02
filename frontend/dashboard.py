@@ -4,7 +4,11 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 import streamlit as st
 import requests
+<<<<<<< HEAD
 from pages.upload import show_upload_page
+=======
+from pages.upload import show_landing_page, show_login_page, show_register_page, show_upload_page
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 from pages.quality import show_quality_page
 from pages.fairness import show_fairness_page
 from pages.history import show_history_page
@@ -24,6 +28,10 @@ html, body, [class*="css"] {
     font-family: 'Syne', sans-serif !important;
     background-color: #030303 !important;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 h1 {
     font-family: 'Syne', sans-serif !important;
     font-weight: 700 !important;
@@ -42,21 +50,37 @@ h3 {
     font-weight: 600 !important;
     color: #608ec7 !important;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 p, li, span, div {
     font-family: 'Syne', sans-serif !important;
     color: #ffffff !important;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 [data-testid="stCaptionContainer"] p {
     font-family: 'DM Mono', monospace !important;
     font-size: 11px !important;
     color: #608ec7 !important;
     letter-spacing: 0.5px !important;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 .block-container {
     border-top: 2px solid #db1886;
     padding-top: 2rem !important;
     background-color: #030303 !important;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 [data-testid="metric-container"] {
     background: #0a0a0a !important;
     border: 1px solid #1a1a1a !important;
@@ -75,6 +99,11 @@ p, li, span, div {
     font-size: 1.6rem !important;
     color: #ff6f00 !important;
 }
+<<<<<<< HEAD
+=======
+
+/* Default button — outline orange */
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 .stButton > button {
     font-family: 'Syne', sans-serif !important;
     font-weight: 600 !important;
@@ -90,6 +119,41 @@ p, li, span, div {
     background: #ff6f00 !important;
     color: #030303 !important;
 }
+<<<<<<< HEAD
+=======
+
+/* Auth buttons — filled solid orange */
+div.auth-buttons .stButton > button {
+    background: #ff6f00 !important;
+    color: #030303 !important;
+    border: none !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    border-radius: 6px !important;
+}
+div.auth-buttons .stButton > button:hover {
+    background: #cc5a00 !important;
+    color: #030303 !important;
+}
+
+/* Learn more buttons — subtle ghost */
+div.learn-more-btn .stButton > button {
+    background: transparent !important;
+    color: #444 !important;
+    border: 1px solid #1a1a1a !important;
+    font-size: 11px !important;
+    font-weight: 400 !important;
+    letter-spacing: 0.5px !important;
+    padding: 0.3rem 0.8rem !important;
+    border-radius: 4px !important;
+}
+div.learn-more-btn .stButton > button:hover {
+    border-color: #444 !important;
+    color: #888 !important;
+    background: transparent !important;
+}
+
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 .stProgress > div > div {
     height: 4px !important;
     border-radius: 2px !important;
@@ -99,6 +163,10 @@ p, li, span, div {
     background: #1a1a1a !important;
     border-radius: 2px !important;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 [data-testid="stSidebar"] {
     background-color: #080808 !important;
     border-right: 1px solid #1a1a1a !important;
@@ -106,6 +174,10 @@ p, li, span, div {
 [data-testid="stSidebar"] * {
     font-family: 'Syne', sans-serif !important;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 .stTextInput > div > div > input {
     font-family: 'DM Mono', monospace !important;
     font-size: 13px !important;
@@ -124,11 +196,19 @@ p, li, span, div {
     font-size: 11px !important;
     letter-spacing: 0.5px !important;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 [data-testid="stFileUploader"] {
     background: #0a0a0a !important;
     border: 1px dashed #1a1a1a !important;
     border-radius: 8px !important;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 [data-testid="stAlert"] {
     border-radius: 0 6px 6px 0 !important;
     border-left-width: 3px !important;
@@ -136,22 +216,42 @@ p, li, span, div {
     font-size: 12px !important;
     background: #0a0a0a !important;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 [data-testid="stDataFrame"] {
     font-family: 'DM Mono', monospace !important;
     font-size: 12px !important;
 }
+<<<<<<< HEAD
 hr {
     border-color: #1a1a1a !important;
 }
+=======
+
+hr {
+    border-color: #1a1a1a !important;
+}
+
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 [data-testid="stToggle"] label {
     font-family: 'Syne', sans-serif !important;
     color: #ff6f00 !important;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 [data-testid="stSidebar"] p,
 [data-testid="stSidebar"] small {
     font-family: 'DM Mono', monospace !important;
     font-size: 11px !important;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 div[data-testid="stSidebar"] div.nav-upload button {
     background-color: #0a0f18 !important;
     border: 1px solid #608ec744 !important;
@@ -174,6 +274,10 @@ div[data-testid="stSidebar"] div.nav-upload-active button {
     text-align: left !important;
     margin-bottom: 4px !important;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 div[data-testid="stSidebar"] div.nav-quality button {
     background-color: #180a00 !important;
     border: 1px solid #ff6f0044 !important;
@@ -196,6 +300,10 @@ div[data-testid="stSidebar"] div.nav-quality-active button {
     text-align: left !important;
     margin-bottom: 4px !important;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 div[data-testid="stSidebar"] div.nav-fairness button {
     background-color: #180008 !important;
     border: 1px solid #db188644 !important;
@@ -218,6 +326,10 @@ div[data-testid="stSidebar"] div.nav-fairness-active button {
     text-align: left !important;
     margin-bottom: 4px !important;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 div[data-testid="stSidebar"] div.nav-history button {
     background-color: #0a0a0a !important;
     border: 1px solid #ffffff22 !important;
@@ -245,13 +357,19 @@ div[data-testid="stSidebar"] div.nav-history-active button {
 
 BASE_URL = 'http://localhost:5000'
 
+<<<<<<< HEAD
 # ── Session state init (single, clean block) ──────────────────────────────────
+=======
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
 if 'username' not in st.session_state:
     st.session_state.username = None
+<<<<<<< HEAD
 if 'token' not in st.session_state:
     st.session_state.token = None
+=======
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 if 'dataset_id' not in st.session_state:
     st.session_state.dataset_id = None
 if 'quality_result' not in st.session_state:
@@ -260,10 +378,13 @@ if 'fairness_result' not in st.session_state:
     st.session_state.fairness_result = None
 if 'explanation_result' not in st.session_state:
     st.session_state.explanation_result = None
+<<<<<<< HEAD
 if 'semantic_analysis' not in st.session_state:
     st.session_state.semantic_analysis = None
 if 'outcome_column' not in st.session_state:
     st.session_state.outcome_column = None
+=======
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
 if 'no_protected_attrs' not in st.session_state:
     st.session_state.no_protected_attrs = False
 if 'current_page' not in st.session_state:
@@ -271,6 +392,7 @@ if 'current_page' not in st.session_state:
 if 'api_session' not in st.session_state:
     st.session_state.api_session = requests.Session()
 
+<<<<<<< HEAD
 
 # ── Auth helpers ──────────────────────────────────────────────────────────────
 def do_login(username, password):
@@ -441,6 +563,18 @@ def show_login_page():
 if not st.session_state.logged_in:
     if st.session_state.current_page == 'login':
         show_login_page()
+=======
+def logout():
+    st.session_state.api_session.post(f'{BASE_URL}/auth/logout')
+    for key in list(st.session_state.keys()):
+        del st.session_state[key]
+
+if not st.session_state.logged_in:
+    if st.session_state.current_page == 'login':
+        show_login_page(BASE_URL)
+    elif st.session_state.current_page == 'register':
+        show_register_page(BASE_URL)
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
     elif st.session_state.current_page == 'info_quality':
         show_info_page('quality')
     elif st.session_state.current_page == 'info_fairness':
@@ -452,7 +586,10 @@ if not st.session_state.logged_in:
     else:
         show_landing_page()
 else:
+<<<<<<< HEAD
     # Sidebar
+=======
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
     st.sidebar.markdown(
         "<p style='font-family:Syne,sans-serif; font-size:16px; font-weight:700; color:#ff6f00; margin-bottom:2px;'>Fairness Auditor</p>",
         unsafe_allow_html=True
@@ -501,7 +638,10 @@ else:
         logout()
         st.rerun()
 
+<<<<<<< HEAD
     # Page routing
+=======
+>>>>>>> 6aa08780c6ead22649d69d286c1030c5c71d05b4
     if st.session_state.current_page == 'upload':
         show_upload_page(BASE_URL)
     elif st.session_state.current_page == 'quality':
