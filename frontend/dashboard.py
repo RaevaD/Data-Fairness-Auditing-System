@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 import streamlit as st
 import requests
-from pages.upload import show_upload_page
+from pages.upload import show_landing_page, show_login_page, show_register_page, show_upload_page
 from pages.quality import show_quality_page
 from pages.fairness import show_fairness_page
 from pages.history import show_history_page
@@ -22,44 +22,49 @@ header {visibility: hidden;}
 
 html, body, [class*="css"] {
     font-family: 'Syne', sans-serif !important;
-    background-color: #030303 !important;
+    background-color: #0d0b1e !important;
 }
+
 h1 {
     font-family: 'Syne', sans-serif !important;
     font-weight: 700 !important;
     font-size: 1.8rem !important;
     letter-spacing: -1px !important;
-    color: #ff6f00 !important;
+    color: #afa9ec !important;
 }
 h2 {
     font-family: 'Syne', sans-serif !important;
     font-weight: 600 !important;
-    color: #db1886 !important;
+    color: #5dcaa5 !important;
     letter-spacing: -0.3px !important;
 }
 h3 {
     font-family: 'Syne', sans-serif !important;
     font-weight: 600 !important;
-    color: #608ec7 !important;
+    color: #7f77dd !important;
 }
+
 p, li, span, div {
     font-family: 'Syne', sans-serif !important;
-    color: #ffffff !important;
+    color: #e8e0ff !important;
 }
+
 [data-testid="stCaptionContainer"] p {
     font-family: 'DM Mono', monospace !important;
     font-size: 11px !important;
-    color: #608ec7 !important;
+    color: #7f77dd !important;
     letter-spacing: 0.5px !important;
 }
+
 .block-container {
-    border-top: 2px solid #db1886;
+    border-top: 2px solid #7f77dd;
     padding-top: 2rem !important;
-    background-color: #030303 !important;
+    background-color: #0d0b1e !important;
 }
+
 [data-testid="metric-container"] {
-    background: #0a0a0a !important;
-    border: 1px solid #1a1a1a !important;
+    background: #12103a !important;
+    border: 0.5px solid #2a2560 !important;
     border-radius: 10px !important;
     padding: 1rem !important;
 }
@@ -68,94 +73,119 @@ p, li, span, div {
     font-size: 10px !important;
     letter-spacing: 1px !important;
     text-transform: uppercase !important;
-    color: #608ec7 !important;
+    color: #7f77dd !important;
 }
 [data-testid="stMetricValue"] {
     font-family: 'DM Mono', monospace !important;
     font-size: 1.6rem !important;
-    color: #ff6f00 !important;
+    color: #afa9ec !important;
 }
+
 .stButton > button {
     font-family: 'Syne', sans-serif !important;
     font-weight: 600 !important;
     font-size: 13px !important;
     letter-spacing: 0.5px !important;
     border-radius: 6px !important;
-    border: 1px solid #ff6f00 !important;
-    color: #ff6f00 !important;
+    border: 1px solid #2a2560 !important;
+    color: #7f77dd !important;
     background: transparent !important;
     transition: all 0.2s ease !important;
 }
 .stButton > button:hover {
-    background: #ff6f00 !important;
-    color: #030303 !important;
+    background: #12103a !important;
+    color: #afa9ec !important;
+    border-color: #7f77dd !important;
 }
+
+.stButton > button[kind="primary"] {
+    background: #534ab7 !important;
+    color: #eeedfe !important;
+    border: none !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    border-radius: 6px !important;
+}
+.stButton > button[kind="primary"]:hover {
+    background: #7f77dd !important;
+    color: #0d0b1e !important;
+}
+
 .stProgress > div > div {
     height: 4px !important;
     border-radius: 2px !important;
-    background: #ff6f00 !important;
+    background: #7f77dd !important;
 }
 .stProgress > div {
-    background: #1a1a1a !important;
+    background: #1a1a3a !important;
     border-radius: 2px !important;
 }
+
 [data-testid="stSidebar"] {
-    background-color: #080808 !important;
-    border-right: 1px solid #1a1a1a !important;
+    background-color: #0a0818 !important;
+    border-right: 0.5px solid #1e1a50 !important;
 }
 [data-testid="stSidebar"] * {
     font-family: 'Syne', sans-serif !important;
 }
+
 .stTextInput > div > div > input {
     font-family: 'DM Mono', monospace !important;
     font-size: 13px !important;
-    background: #0a0a0a !important;
-    border: 1px solid #1a1a1a !important;
-    color: #ffffff !important;
+    background: #12103a !important;
+    border: 0.5px solid #2a2560 !important;
+    color: #e8e0ff !important;
     border-radius: 6px !important;
 }
 .stTextInput > div > div > input:focus {
-    border-color: #ff6f00 !important;
-    box-shadow: 0 0 0 1px #ff6f00 !important;
+    border-color: #7f77dd !important;
+    box-shadow: 0 0 0 1px #7f77dd !important;
 }
 .stTextInput label {
-    color: #608ec7 !important;
+    color: #7f77dd !important;
     font-family: 'DM Mono', monospace !important;
     font-size: 11px !important;
     letter-spacing: 0.5px !important;
 }
+
 [data-testid="stFileUploader"] {
-    background: #0a0a0a !important;
-    border: 1px dashed #1a1a1a !important;
+    background: #12103a !important;
+    border: 1px dashed #2a2560 !important;
     border-radius: 8px !important;
 }
+
 [data-testid="stAlert"] {
     border-radius: 0 6px 6px 0 !important;
     border-left-width: 3px !important;
     font-family: 'DM Mono', monospace !important;
     font-size: 12px !important;
-    background: #0a0a0a !important;
+    background: #12103a !important;
 }
+
 [data-testid="stDataFrame"] {
     font-family: 'DM Mono', monospace !important;
     font-size: 12px !important;
 }
+
 hr {
-    border-color: #1a1a1a !important;
+    border-color: #1e1a50 !important;
 }
+
 [data-testid="stToggle"] label {
     font-family: 'Syne', sans-serif !important;
-    color: #ff6f00 !important;
+    color: #7f77dd !important;
 }
+
 [data-testid="stSidebar"] p,
 [data-testid="stSidebar"] small {
     font-family: 'DM Mono', monospace !important;
     font-size: 11px !important;
 }
+
 div[data-testid="stSidebar"] div.nav-upload button {
-    background-color: #0a0f18 !important;
-    border: 1px solid #608ec744 !important;
-    color: #608ec7 !important;
+    background-color: #0e0c2e !important;
+    border: 0.5px solid #2a2560 !important;
+    color: #7f77dd !important;
     border-radius: 8px !important;
     font-size: 0.9rem !important;
     font-weight: 400 !important;
@@ -164,9 +194,9 @@ div[data-testid="stSidebar"] div.nav-upload button {
     margin-bottom: 4px !important;
 }
 div[data-testid="stSidebar"] div.nav-upload-active button {
-    background-color: #608ec7 !important;
-    border: 2px solid #608ec7 !important;
-    color: #030303 !important;
+    background-color: #534ab7 !important;
+    border: 2px solid #7f77dd !important;
+    color: #eeedfe !important;
     border-radius: 8px !important;
     font-size: 0.9rem !important;
     font-weight: 700 !important;
@@ -174,10 +204,11 @@ div[data-testid="stSidebar"] div.nav-upload-active button {
     text-align: left !important;
     margin-bottom: 4px !important;
 }
+
 div[data-testid="stSidebar"] div.nav-quality button {
-    background-color: #180a00 !important;
-    border: 1px solid #ff6f0044 !important;
-    color: #ff6f00 !important;
+    background-color: #061a14 !important;
+    border: 0.5px solid #0f3d30 !important;
+    color: #1d9e75 !important;
     border-radius: 8px !important;
     font-size: 0.9rem !important;
     font-weight: 400 !important;
@@ -186,9 +217,9 @@ div[data-testid="stSidebar"] div.nav-quality button {
     margin-bottom: 4px !important;
 }
 div[data-testid="stSidebar"] div.nav-quality-active button {
-    background-color: #ff6f00 !important;
-    border: 2px solid #ff6f00 !important;
-    color: #030303 !important;
+    background-color: #1d9e75 !important;
+    border: 2px solid #5dcaa5 !important;
+    color: #e1f5ee !important;
     border-radius: 8px !important;
     font-size: 0.9rem !important;
     font-weight: 700 !important;
@@ -196,10 +227,11 @@ div[data-testid="stSidebar"] div.nav-quality-active button {
     text-align: left !important;
     margin-bottom: 4px !important;
 }
+
 div[data-testid="stSidebar"] div.nav-fairness button {
-    background-color: #180008 !important;
-    border: 1px solid #db188644 !important;
-    color: #db1886 !important;
+    background-color: #12103a !important;
+    border: 0.5px solid #2a2560 !important;
+    color: #afa9ec !important;
     border-radius: 8px !important;
     font-size: 0.9rem !important;
     font-weight: 400 !important;
@@ -208,9 +240,9 @@ div[data-testid="stSidebar"] div.nav-fairness button {
     margin-bottom: 4px !important;
 }
 div[data-testid="stSidebar"] div.nav-fairness-active button {
-    background-color: #db1886 !important;
-    border: 2px solid #db1886 !important;
-    color: #ffffff !important;
+    background-color: #7f77dd !important;
+    border: 2px solid #afa9ec !important;
+    color: #eeedfe !important;
     border-radius: 8px !important;
     font-size: 0.9rem !important;
     font-weight: 700 !important;
@@ -218,10 +250,11 @@ div[data-testid="stSidebar"] div.nav-fairness-active button {
     text-align: left !important;
     margin-bottom: 4px !important;
 }
+
 div[data-testid="stSidebar"] div.nav-history button {
-    background-color: #0a0a0a !important;
-    border: 1px solid #ffffff22 !important;
-    color: #888888 !important;
+    background-color: #061a14 !important;
+    border: 0.5px solid #0f3d30 !important;
+    color: #5dcaa5 !important;
     border-radius: 8px !important;
     font-size: 0.9rem !important;
     font-weight: 400 !important;
@@ -230,9 +263,9 @@ div[data-testid="stSidebar"] div.nav-history button {
     margin-bottom: 4px !important;
 }
 div[data-testid="stSidebar"] div.nav-history-active button {
-    background-color: #ffffff !important;
-    border: 2px solid #ffffff !important;
-    color: #030303 !important;
+    background-color: #0f6e56 !important;
+    border: 2px solid #5dcaa5 !important;
+    color: #e1f5ee !important;
     border-radius: 8px !important;
     font-size: 0.9rem !important;
     font-weight: 700 !important;
@@ -240,18 +273,43 @@ div[data-testid="stSidebar"] div.nav-history-active button {
     text-align: left !important;
     margin-bottom: 4px !important;
 }
+
+div.auth-buttons .stButton > button {
+    background: #534ab7 !important;
+    color: #eeedfe !important;
+    border: none !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    border-radius: 6px !important;
+}
+div.auth-buttons .stButton > button:hover {
+    background: #7f77dd !important;
+    color: #0d0b1e !important;
+}
+
+div.learn-more-btn .stButton > button {
+    background: transparent !important;
+    color: #2a2560 !important;
+    border: 0.5px solid #1e1a50 !important;
+    font-size: 11px !important;
+    font-weight: 400 !important;
+    letter-spacing: 0.5px !important;
+    border-radius: 4px !important;
+}
+div.learn-more-btn .stButton > button:hover {
+    border-color: #7f77dd !important;
+    color: #7f77dd !important;
+    background: transparent !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
 BASE_URL = 'http://localhost:5000'
 
-# ── Session state init (single, clean block) ──────────────────────────────────
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
 if 'username' not in st.session_state:
     st.session_state.username = None
-if 'token' not in st.session_state:
-    st.session_state.token = None
 if 'dataset_id' not in st.session_state:
     st.session_state.dataset_id = None
 if 'quality_result' not in st.session_state:
@@ -260,187 +318,34 @@ if 'fairness_result' not in st.session_state:
     st.session_state.fairness_result = None
 if 'explanation_result' not in st.session_state:
     st.session_state.explanation_result = None
-if 'semantic_analysis' not in st.session_state:
-    st.session_state.semantic_analysis = None
-if 'outcome_column' not in st.session_state:
-    st.session_state.outcome_column = None
 if 'no_protected_attrs' not in st.session_state:
     st.session_state.no_protected_attrs = False
 if 'current_page' not in st.session_state:
     st.session_state.current_page = 'landing'
+if 'token' not in st.session_state:
+    st.session_state.token = None
+if 'upload_stats' not in st.session_state:
+    st.session_state.upload_stats = {}
+if 'semantic_analysis' not in st.session_state:
+    st.session_state.semantic_analysis = {}
 if 'api_session' not in st.session_state:
     st.session_state.api_session = requests.Session()
 
-
-# ── Auth helpers ──────────────────────────────────────────────────────────────
-def do_login(username, password):
-    try:
-        res = requests.post(
-            f'{BASE_URL}/auth/login',
-            json={'username': username, 'password': password}
-        )
-        if res.status_code == 200:
-            data = res.json()
-            token = data['token']
-            st.session_state.token = token
-            st.session_state.api_session.headers.update({
-                'Authorization': f'Bearer {token}'
-            })
-            st.session_state.logged_in = True
-            st.session_state.username = username
-            st.session_state.current_page = 'upload'
-            st.rerun()
-        else:
-            st.error(res.json().get('error', 'Login failed.'))
-    except Exception:
-        st.error('Cannot connect to server. Make sure the backend is running on port 5000.')
-
-
-def do_register(username, password):
-    try:
-        res = requests.post(
-            f'{BASE_URL}/auth/register',
-            json={'username': username, 'password': password}
-        )
-        if res.status_code == 201:
-            st.success('Account created! Signing you in...')
-            do_login(username, password)
-        else:
-            st.error(res.json().get('error', 'Registration failed.'))
-    except Exception:
-        st.error('Cannot connect to server. Make sure the backend is running on port 5000.')
-
+def get_headers():
+    if st.session_state.token:
+        return {'Authorization': f'Bearer {st.session_state.token}'}
+    return {}
 
 def logout():
-    try:
-        st.session_state.api_session.post(f'{BASE_URL}/auth/logout')
-    except Exception:
-        pass
+    st.session_state.api_session.post(f'{BASE_URL}/auth/logout', headers=get_headers())
     for key in list(st.session_state.keys()):
         del st.session_state[key]
 
-def show_landing_page():
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.markdown("""
-        <div style="text-align:center; padding-top:4rem; margin-bottom:2.5rem;">
-            <h1 style="font-size:2.8rem; letter-spacing:-2px;">Fairness Auditor</h1>
-            <p style="font-family:'DM Mono',monospace; font-size:12px; color:#608ec7;">
-                Automated dataset quality scoring & algorithmic bias detection
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-
-        st.markdown("""
-        <div style="background:#0a0a0a; border:1px solid #1a1a1a; border-radius:12px; padding:1.5rem; margin-bottom:1.5rem;">
-            <div style="font-family:'DM Mono',monospace; font-size:10px; color:#ff6f00; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px;">What this does</div>
-            <p style="font-size:13px; color:#ffffff; line-height:1.7; margin:0;">
-                Upload any CSV or Excel dataset. The system scores it across 4 quality dimensions,
-                audits it for bias against protected demographic groups, and generates a plain
-                English explanation with a prioritised remediation plan.
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-
-        c1, c2 = st.columns(2)
-
-        with c1:
-            st.markdown("""
-            <div style="background:#030303; border:1px solid #1a1a1a; border-left:3px solid #ff6f00; border-radius:6px; padding:12px; margin-bottom:4px;">
-                <div style="font-family:'DM Mono',monospace; font-size:10px; color:#ff6f00; margin-bottom:4px;">QUALITY SCORING</div>
-                <div style="font-size:12px; color:#888;">Completeness, Validity, Consistency, Uniqueness</div>
-            </div>
-            """, unsafe_allow_html=True)
-            if st.button('Learn more', key='info_quality', use_container_width=True):
-                st.session_state.current_page = 'info_quality'
-                st.rerun()
-
-            st.markdown("<div style='margin-top:12px;'></div>", unsafe_allow_html=True)
-
-            st.markdown("""
-            <div style="background:#030303; border:1px solid #1a1a1a; border-left:3px solid #608ec7; border-radius:6px; padding:12px; margin-bottom:4px;">
-                <div style="font-family:'DM Mono',monospace; font-size:10px; color:#608ec7; margin-bottom:4px;">AI EXPLANATION</div>
-                <div style="font-size:12px; color:#888;">Plain English report with remediation plan</div>
-            </div>
-            """, unsafe_allow_html=True)
-            if st.button('Learn more', key='info_ai', use_container_width=True):
-                st.session_state.current_page = 'info_ai'
-                st.rerun()
-
-        with c2:
-            st.markdown("""
-            <div style="background:#030303; border:1px solid #1a1a1a; border-left:3px solid #db1886; border-radius:6px; padding:12px; margin-bottom:4px;">
-                <div style="font-family:'DM Mono',monospace; font-size:10px; color:#db1886; margin-bottom:4px;">FAIRNESS AUDIT</div>
-                <div style="font-size:12px; color:#888;">Disparate Impact, Demographic Parity, SPD</div>
-            </div>
-            """, unsafe_allow_html=True)
-            if st.button('Learn more', key='info_fairness', use_container_width=True):
-                st.session_state.current_page = 'info_fairness'
-                st.rerun()
-
-            st.markdown("<div style='margin-top:12px;'></div>", unsafe_allow_html=True)
-
-            st.markdown("""
-            <div style="background:#030303; border:1px solid #1a1a1a; border-left:3px solid #ffffff; border-radius:6px; padding:12px; margin-bottom:4px;">
-                <div style="font-family:'DM Mono',monospace; font-size:10px; color:#ffffff; margin-bottom:4px;">AUDIT HISTORY</div>
-                <div style="font-size:12px; color:#888;">Track all previous dataset audits</div>
-            </div>
-            """, unsafe_allow_html=True)
-            if st.button('Learn more', key='info_history', use_container_width=True):
-                st.session_state.current_page = 'info_history'
-                st.rerun()
-
-        st.markdown("<br>", unsafe_allow_html=True)
-        b1, b2 = st.columns(2)
-        with b1:
-            if st.button('Login', use_container_width=True, key='landing_login'):
-                st.session_state.current_page = 'login'
-                st.rerun()
-        with b2:
-            if st.button('Register', use_container_width=True, key='landing_register'):
-                st.session_state.current_page = 'login'
-                st.rerun()
-                
-# ── Login page ────────────────────────────────────────────────────────────────
-def show_login_page():
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.markdown("""
-        <div style="text-align:center; padding-top:4rem; margin-bottom:2rem;">
-            <h1 style="font-size:2.5rem; letter-spacing:-2px;">Fairness Auditor</h1>
-            <p style="font-family:'DM Mono',monospace; font-size:12px; color:#608ec7;">
-                Automated dataset quality scoring & bias detection
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-
-        tab1, tab2 = st.tabs(["Login", "Register"])
-
-        with tab1:
-            username = st.text_input('Username', key='login_user', placeholder='Enter username')
-            password = st.text_input('Password', key='login_pass', type='password', placeholder='Enter password')
-            if st.button('Login', use_container_width=True, key='btn_login'):
-                if not username or not password:
-                    st.error('Please enter both username and password.')
-                else:
-                    do_login(username, password)
-
-        with tab2:
-            new_user = st.text_input('Username', key='reg_user', placeholder='Choose a username')
-            new_pass = st.text_input('Password', key='reg_pass', type='password', placeholder='Min 6 characters')
-            if st.button('Create Account', use_container_width=True, key='btn_register'):
-                if not new_user or not new_pass:
-                    st.error('Please fill in both fields.')
-                elif len(new_pass) < 6:
-                    st.error('Password must be at least 6 characters.')
-                else:
-                    do_register(new_user, new_pass)
-
-
-# ── Main app routing ──────────────────────────────────────────────────────────
 if not st.session_state.logged_in:
     if st.session_state.current_page == 'login':
-        show_login_page()
+        show_login_page(BASE_URL)
+    elif st.session_state.current_page == 'register':
+        show_register_page(BASE_URL)
     elif st.session_state.current_page == 'info_quality':
         show_info_page('quality')
     elif st.session_state.current_page == 'info_fairness':
@@ -452,30 +357,29 @@ if not st.session_state.logged_in:
     else:
         show_landing_page()
 else:
-    # Sidebar
     st.sidebar.markdown(
-        "<p style='font-family:Syne,sans-serif; font-size:16px; font-weight:700; color:#ff6f00; margin-bottom:2px;'>Fairness Auditor</p>",
+        "<p style='font-family:Syne,sans-serif; font-size:16px; font-weight:700; color:#afa9ec; margin-bottom:2px;'>Fairness Auditor</p>",
         unsafe_allow_html=True
     )
     st.sidebar.markdown(
-        f"<p style='font-family:DM Mono,monospace; font-size:11px; color:#608ec7;'>signed in as {st.session_state.username}</p>",
+        f"<p style='font-family:DM Mono,monospace; font-size:11px; color:#5dcaa5;'>signed in as {st.session_state.username}</p>",
         unsafe_allow_html=True
     )
     st.sidebar.divider()
     st.sidebar.markdown(
-        "<p style='font-family:DM Mono,monospace; font-size:10px; letter-spacing:1px; color:#444; text-transform:uppercase;'>Progress</p>",
+        "<p style='font-family:DM Mono,monospace; font-size:10px; letter-spacing:1px; color:#2a2560; text-transform:uppercase;'>Progress</p>",
         unsafe_allow_html=True
     )
     st.sidebar.markdown(
-        f"<p style='font-family:DM Mono,monospace; font-size:12px; color:{'#ff6f00' if st.session_state.dataset_id else '#333'};'>{'✓' if st.session_state.dataset_id else '○'} Dataset uploaded</p>",
+        f"<p style='font-family:DM Mono,monospace; font-size:12px; color:{'#5dcaa5' if st.session_state.dataset_id else '#2a2560'};'>{'✓' if st.session_state.dataset_id else '○'} Dataset uploaded</p>",
         unsafe_allow_html=True
     )
     st.sidebar.markdown(
-        f"<p style='font-family:DM Mono,monospace; font-size:12px; color:{'#ff6f00' if st.session_state.quality_result else '#333'};'>{'✓' if st.session_state.quality_result else '○'} Quality checked</p>",
+        f"<p style='font-family:DM Mono,monospace; font-size:12px; color:{'#7f77dd' if st.session_state.quality_result else '#2a2560'};'>{'✓' if st.session_state.quality_result else '○'} Quality checked</p>",
         unsafe_allow_html=True
     )
     st.sidebar.markdown(
-        f"<p style='font-family:DM Mono,monospace; font-size:12px; color:{'#db1886' if st.session_state.fairness_result else '#333'};'>{'✓' if st.session_state.fairness_result else '○'} Fairness audited</p>",
+        f"<p style='font-family:DM Mono,monospace; font-size:12px; color:{'#afa9ec' if st.session_state.fairness_result else '#2a2560'};'>{'✓' if st.session_state.fairness_result else '○'} Fairness audited</p>",
         unsafe_allow_html=True
     )
     st.sidebar.divider()
@@ -501,7 +405,6 @@ else:
         logout()
         st.rerun()
 
-    # Page routing
     if st.session_state.current_page == 'upload':
         show_upload_page(BASE_URL)
     elif st.session_state.current_page == 'quality':

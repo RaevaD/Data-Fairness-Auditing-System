@@ -13,9 +13,9 @@ def show_info_page(topic):
         st.divider()
 
         st.markdown("""
-        <div style="background:#0a0a0a; border:1px solid #1a1a1a; border-left:3px solid #ff6f00; border-radius:6px; padding:1.2rem; margin-bottom:1.5rem;">
-            <div style="font-family:'DM Mono',monospace; font-size:10px; color:#ff6f00; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px;">Overall Score Formula</div>
-            <div style="font-family:'DM Mono',monospace; font-size:14px; color:#ffffff;">
+        <div style="background:#0e0c2e; border:0.5px solid #2a2560; border-left:3px solid #7f77dd; border-radius:0 6px 6px 0; padding:1.2rem; margin-bottom:1.5rem;">
+            <div style="font-family:'DM Mono',monospace; font-size:10px; color:#7f77dd; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px;">Overall Score Formula</div>
+            <div style="font-family:'DM Mono',monospace; font-size:14px; color:#e8e0ff;">
                 Score = (Completeness × 0.35) + (Validity × 0.25) + (Consistency × 0.25) + (Uniqueness × 0.15)
             </div>
         </div>
@@ -24,8 +24,8 @@ def show_info_page(topic):
         st.subheader('Completeness — 35% weight')
         st.markdown('Measures how much of your data is present versus missing.')
         st.markdown("""
-        <div style="background:#0a0a0a; border:1px solid #1a1a1a; border-radius:6px; padding:1rem; margin:0.5rem 0 1rem;">
-            <div style="font-family:'DM Mono',monospace; font-size:13px; color:#ff6f00;">Completeness = 1 - (missing_cells / total_cells)</div>
+        <div style="background:#0e0c2e; border:0.5px solid #2a2560; border-radius:6px; padding:1rem; margin:0.5rem 0 1rem;">
+            <div style="font-family:'DM Mono',monospace; font-size:13px; color:#afa9ec;">Completeness = 1 - (missing_cells / total_cells)</div>
         </div>
         """, unsafe_allow_html=True)
         st.markdown("""
@@ -38,8 +38,8 @@ def show_info_page(topic):
         st.subheader('Validity — 25% weight')
         st.markdown('Measures whether values conform to expected rules and constraints.')
         st.markdown("""
-        <div style="background:#0a0a0a; border:1px solid #1a1a1a; border-radius:6px; padding:1rem; margin:0.5rem 0 1rem;">
-            <div style="font-family:'DM Mono',monospace; font-size:13px; color:#ff6f00;">Validity = 1 - (invalid_values / total_checked_values)</div>
+        <div style="background:#0e0c2e; border:0.5px solid #2a2560; border-radius:6px; padding:1rem; margin:0.5rem 0 1rem;">
+            <div style="font-family:'DM Mono',monospace; font-size:13px; color:#afa9ec;">Validity = 1 - (invalid_values / total_checked_values)</div>
         </div>
         """, unsafe_allow_html=True)
         st.markdown("""
@@ -51,8 +51,8 @@ def show_info_page(topic):
         st.subheader('Consistency — 25% weight')
         st.markdown('Measures whether values make logical sense in relation to each other.')
         st.markdown("""
-        <div style="background:#0a0a0a; border:1px solid #1a1a1a; border-radius:6px; padding:1rem; margin:0.5rem 0 1rem;">
-            <div style="font-family:'DM Mono',monospace; font-size:13px; color:#ff6f00;">Consistency = 1 - (violated_rules / total_rules_checked)</div>
+        <div style="background:#0e0c2e; border:0.5px solid #2a2560; border-radius:6px; padding:1rem; margin:0.5rem 0 1rem;">
+            <div style="font-family:'DM Mono',monospace; font-size:13px; color:#afa9ec;">Consistency = 1 - (violated_rules / total_rules_checked)</div>
         </div>
         """, unsafe_allow_html=True)
         st.markdown("""
@@ -64,8 +64,8 @@ def show_info_page(topic):
         st.subheader('Uniqueness — 15% weight')
         st.markdown('Measures how many rows are duplicated in the dataset.')
         st.markdown("""
-        <div style="background:#0a0a0a; border:1px solid #1a1a1a; border-radius:6px; padding:1rem; margin:0.5rem 0 1rem;">
-            <div style="font-family:'DM Mono',monospace; font-size:13px; color:#ff6f00;">Uniqueness = 1 - (duplicate_rows / total_rows)</div>
+        <div style="background:#0e0c2e; border:0.5px solid #2a2560; border-radius:6px; padding:1rem; margin:0.5rem 0 1rem;">
+            <div style="font-family:'DM Mono',monospace; font-size:13px; color:#afa9ec;">Uniqueness = 1 - (duplicate_rows / total_rows)</div>
         </div>
         """, unsafe_allow_html=True)
         st.markdown("""
@@ -79,9 +79,9 @@ def show_info_page(topic):
         st.divider()
 
         st.markdown("""
-        <div style="background:#0a0a0a; border:1px solid #1a1a1a; border-left:3px solid #db1886; border-radius:6px; padding:1.2rem; margin-bottom:1.5rem;">
-            <div style="font-family:'DM Mono',monospace; font-size:10px; color:#db1886; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px;">What is algorithmic bias?</div>
-            <div style="font-size:13px; color:#ffffff; line-height:1.7;">
+        <div style="background:#061a14; border:0.5px solid #0f3d30; border-left:3px solid #1d9e75; border-radius:0 6px 6px 0; padding:1.2rem; margin-bottom:1.5rem;">
+            <div style="font-family:'DM Mono',monospace; font-size:10px; color:#1d9e75; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px;">What is algorithmic bias?</div>
+            <div style="font-size:13px; color:#e8e0ff; line-height:1.7;">
                 Algorithmic bias occurs when a dataset or model systematically produces unfair outcomes
                 for certain demographic groups. Protected attributes like gender, race, and age are
                 checked against outcome variables like income or loan approval.
@@ -92,8 +92,8 @@ def show_info_page(topic):
         st.subheader('Disparate Impact (DI)')
         st.markdown('Ratio of positive outcome rates between unprivileged and privileged groups.')
         st.markdown("""
-        <div style="background:#0a0a0a; border:1px solid #1a1a1a; border-radius:6px; padding:1rem; margin:0.5rem 0 1rem;">
-            <div style="font-family:'DM Mono',monospace; font-size:13px; color:#db1886;">DI = P(positive outcome | unprivileged) / P(positive outcome | privileged)</div>
+        <div style="background:#061a14; border:0.5px solid #0f3d30; border-radius:6px; padding:1rem; margin:0.5rem 0 1rem;">
+            <div style="font-family:'DM Mono',monospace; font-size:13px; color:#5dcaa5;">DI = P(positive outcome | unprivileged) / P(positive outcome | privileged)</div>
         </div>
         """, unsafe_allow_html=True)
         st.markdown("""
@@ -106,8 +106,8 @@ def show_info_page(topic):
         st.subheader('Demographic Parity Difference (DPD)')
         st.markdown('Absolute difference in positive outcome rates between groups.')
         st.markdown("""
-        <div style="background:#0a0a0a; border:1px solid #1a1a1a; border-radius:6px; padding:1rem; margin:0.5rem 0 1rem;">
-            <div style="font-family:'DM Mono',monospace; font-size:13px; color:#db1886;">DPD = |P(positive | unprivileged) - P(positive | privileged)|</div>
+        <div style="background:#061a14; border:0.5px solid #0f3d30; border-radius:6px; padding:1rem; margin:0.5rem 0 1rem;">
+            <div style="font-family:'DM Mono',monospace; font-size:13px; color:#5dcaa5;">DPD = |P(positive | unprivileged) - P(positive | privileged)|</div>
         </div>
         """, unsafe_allow_html=True)
         st.markdown("""
@@ -119,8 +119,8 @@ def show_info_page(topic):
         st.subheader('Statistical Parity Difference (SPD)')
         st.markdown('Like DPD but signed — shows the direction of bias.')
         st.markdown("""
-        <div style="background:#0a0a0a; border:1px solid #1a1a1a; border-radius:6px; padding:1rem; margin:0.5rem 0 1rem;">
-            <div style="font-family:'DM Mono',monospace; font-size:13px; color:#db1886;">SPD = P(positive | unprivileged) - P(positive | privileged)</div>
+        <div style="background:#061a14; border:0.5px solid #0f3d30; border-radius:6px; padding:1rem; margin:0.5rem 0 1rem;">
+            <div style="font-family:'DM Mono',monospace; font-size:13px; color:#5dcaa5;">SPD = P(positive | unprivileged) - P(positive | privileged)</div>
         </div>
         """, unsafe_allow_html=True)
         st.markdown("""
@@ -131,15 +131,15 @@ def show_info_page(topic):
 
     elif topic == 'ai':
         st.title('AI Explanation Engine')
-        st.caption('How Gemini generates plain English explanations of your audit results')
+        st.caption('How the AI generates plain English explanations of your audit results')
         st.divider()
 
         st.markdown("""
-        <div style="background:#0a0a0a; border:1px solid #1a1a1a; border-left:3px solid #608ec7; border-radius:6px; padding:1.2rem; margin-bottom:1.5rem;">
-            <div style="font-family:'DM Mono',monospace; font-size:10px; color:#608ec7; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px;">Powered by Google Gemini</div>
-            <div style="font-size:13px; color:#ffffff; line-height:1.7;">
+        <div style="background:#0e0c2e; border:0.5px solid #2a2560; border-left:3px solid #5dcaa5; border-radius:0 6px 6px 0; padding:1.2rem; margin-bottom:1.5rem;">
+            <div style="font-family:'DM Mono',monospace; font-size:10px; color:#5dcaa5; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px;">AI-Powered Explanations</div>
+            <div style="font-size:13px; color:#e8e0ff; line-height:1.7;">
                 After running quality scoring and fairness auditing, the system sends the results
-                to Gemini which generates a plain English explanation and a prioritised remediation
+                to an AI model which generates a plain English explanation and a prioritised remediation
                 plan grouped by severity.
             </div>
         </div>
@@ -162,13 +162,13 @@ def show_info_page(topic):
 
         st.subheader('Model used')
         st.markdown("""
-        <div style="background:#0a0a0a; border:1px solid #1a1a1a; border-radius:6px; padding:1rem; margin:0.5rem 0 1rem;">
-            <div style="font-family:'DM Mono',monospace; font-size:13px; color:#608ec7;">Model: gemini-2.5-flash</div>
+        <div style="background:#0e0c2e; border:0.5px solid #2a2560; border-radius:6px; padding:1rem; margin:0.5rem 0 1rem;">
+            <div style="font-family:'DM Mono',monospace; font-size:13px; color:#5dcaa5;">Requires a valid API key in your .env file</div>
         </div>
         """, unsafe_allow_html=True)
         st.markdown("""
-- Requires a valid `GOOGLE_API_KEY` in your `.env` file
-- Upload step and explain step both call Gemini — expect 5–15 seconds each
+- Upload step and explain step both call the AI — expect 5–15 seconds each
+- Each explanation uses approximately 1,000–2,000 tokens
         """)
 
     elif topic == 'history':
@@ -177,9 +177,9 @@ def show_info_page(topic):
         st.divider()
 
         st.markdown("""
-        <div style="background:#0a0a0a; border:1px solid #1a1a1a; border-left:3px solid #ffffff; border-radius:6px; padding:1.2rem; margin-bottom:1.5rem;">
-            <div style="font-family:'DM Mono',monospace; font-size:10px; color:#ffffff; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px;">Persistent storage</div>
-            <div style="font-size:13px; color:#ffffff; line-height:1.7;">
+        <div style="background:#0e0c2e; border:0.5px solid #2a2560; border-left:3px solid #afa9ec; border-radius:0 6px 6px 0; padding:1.2rem; margin-bottom:1.5rem;">
+            <div style="font-family:'DM Mono',monospace; font-size:10px; color:#afa9ec; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px;">Persistent storage</div>
+            <div style="font-size:13px; color:#e8e0ff; line-height:1.7;">
                 Every dataset you upload and audit is stored in a SQLite database.
                 Log back in at any time to retrieve previous results without re-uploading.
             </div>
