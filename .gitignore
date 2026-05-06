@@ -31,3 +31,12 @@ Thumbs.db
 .pytest_cache/
 htmlcov/
 .coverage
+
+# Flask instance/runtime files
+instance/
+
+# SQLite databases
+*.db
+
+# Uploads and generated files
+uploads/
