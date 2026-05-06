@@ -150,9 +150,20 @@ def upload_file():
             "semantic_analysis": semantic_analysis  # RETURNED TO FRONTEND
         }), 200
 
+    except ValueError as e:
+        logger.error(f"Upload validation error: {str(e)}")
+        return jsonify({
+            "error": "Invalid file format or structure",
+            "details": str(e),
+            "hint": "Ensure file is CSV/XLSX with at least 10 rows and 2 columns"
+        }), 400
     except Exception as e:
-        logger.error(f"Upload error: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+        logger.error(f"Upload error: {str(e)}", exc_info=True)
+        return jsonify({
+            "error": "Upload failed",
+            "details": str(e),
+            "request_id": dataset_id if 'dataset_id' in locals() else None
+        }), 500
 
 
 # ------------------ QUALITY ------------------
