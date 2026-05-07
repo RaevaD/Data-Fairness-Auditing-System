@@ -276,7 +276,6 @@ def audit_dataset():
         logger.error(f"Audit error: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-
 # ------------------ EXPLAIN (FIXED: Pass stored outcome column) ------------------
 
 @api_bp.route("/explain", methods=["POST"])
@@ -303,17 +302,17 @@ def explain_results():
 
         # Reload dataframe to get dataset info
         df = get_dataframe(report_obj)
-        
+
         # 🔧 FIX: Get outcome column from fairness_report (source of truth)
         outcome_column = None
         if report_obj.fairness_report:
             outcome_column = report_obj.fairness_report.get("outcome_attribute")
-        
+
         dataset_info = {
             "rows": len(df),
             "columns": len(df.columns),
             "column_names": list(df.columns),
-            "outcome_column": outcome_column  # 🔧 NEW: Pass to remediation plan
+            "outcome_column": outcome_column
         }
 
         explainer = AIExplainer()
@@ -326,30 +325,14 @@ def explain_results():
             )
         )
 
-        # ✅ PHASE 3: Generate remediation plan with correct outcome column
-        remediation_plan = convert_numpy_types(
-            explainer.generate_remediation_plan(
-                report_obj.quality_report,
-                report_obj.fairness_report,
-                dataset_info
-            )
-        )
-
-        # Store both
-        report_obj.explanation_report = explanation
-        report_obj.remediation_plan = remediation_plan
-        report_obj.processed = True
-        db.session.commit()
-
         return jsonify({
             "dataset_id": dataset_id,
             "explanation": explanation,
-            "remediation_plan": remediation_plan,
-            "message": "Computed"
+            "message": "Generated"
         }), 200
 
     except Exception as e:
-        logger.error(f"Explain error: {str(e)}")
+        logger.error(f"Explanation error: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 
@@ -367,7 +350,6 @@ def get_results(dataset_id):
     except Exception as e:
         logger.error(f"Results error: {str(e)}")
         return jsonify({"error": str(e)}), 500
-
 
 # ------------------ DATASETS ------------------
 

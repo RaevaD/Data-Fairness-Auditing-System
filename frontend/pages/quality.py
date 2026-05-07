@@ -123,9 +123,9 @@ def show_quality_page(BASE_URL):
         ('Validity', '25% weight', dq['validity']['score'],
          f"{dq['validity']['total_invalid']} invalid values", '#1d9e75', '#0a1f1a', '#0f3d30'),
         ('Consistency', '25% weight', dq['consistency']['score'],
-         f"{dq['consistency']['n_violations']} violations", '#5dcaa5', '#061a14', '#0a2e22'),
+         f"{dq['consistency']['n_violations']} violations", '#5dcaa5', '#0e0c2e', '#1e1a50'),
         ('Uniqueness', '15% weight', dq['uniqueness']['score'],
-         f"{dq['uniqueness']['duplicate_rows']} duplicate rows", '#afa9ec', '#0e0c2e', '#1e1a50'),
+         f"{dq['uniqueness']['duplicate_rows']} duplicate rows", '#afa9ec', '#061a14', '#0a2e22'),
     ]
 
     for name, weight, raw_score, detail, bar_col, bg_col, border_col in dimensions:

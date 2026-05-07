@@ -1,9 +1,3 @@
-"""
-AI Explanation Engine
-- Phase 2: Semantic column analysis via Gemini
-- Phase 3: Explanation + remediation plan generation
-"""
-
 import os
 import time
 import logging
@@ -54,6 +48,39 @@ class AIExplainer:
 
         return "Explanation unavailable."
 
+    def _redact_scores_from_dict(self, data: Dict) -> str:
+        """Convert dict to string with numerical scores replaced"""
+        redacted = data.copy()
+
+        def recurse_redact(obj):
+            if isinstance(obj, dict):
+                return {
+                    k: recurse_redact(v)
+                    for k, v in obj.items()
+                    if k not in ['overall_score', 'scores', 'overall_grade']
+                }
+            elif isinstance(obj, (int, float)):
+                return "[redacted]"
+            elif isinstance(obj, list):
+                return [recurse_redact(item) for item in obj]
+            return obj
+
+        return json.dumps(recurse_redact(redacted), indent=2)
+
+    def _sanitize_explanation_text(self, text: str) -> str:
+        """Remove numerical scores from explanation text"""
+        text = re.sub(r'\b\d+(\.\d+)?/100\b', '', text)
+        text = re.sub(r'\bscore:\s*\d+(\.\d+)?%?\b', '', text, flags=re.IGNORECASE)
+        text = re.sub(r'\b\d+(\.\d+)?%\b', '', text)
+        text = re.sub(
+            r'\boverall score[:\s]+\d+(\.\d+)?\b',
+            '',
+            text,
+            flags=re.IGNORECASE
+        )
+        text = re.sub(r'\s+', ' ', text).strip()
+        return text
+
     # ── Phase 2: Semantic column classification ────────────────────────────────
     def analyze_column_semantics(self, df) -> Dict:
         try:
@@ -61,6 +88,7 @@ class AIExplainer:
                 return self._fallback_column_detection(df)
 
             column_info = {}
+
             for col in df.columns:
                 sample_values = df[col].dropna().head(10).tolist()
                 column_info[col] = {
@@ -98,6 +126,7 @@ Dataset columns with samples:
 
             response_text = self._call_gemini(prompt)
             json_match = re.search(r"\{.*\}", response_text, re.DOTALL)
+
             if not json_match:
                 raise ValueError("No JSON found in Gemini response")
 
@@ -120,6 +149,7 @@ Dataset columns with samples:
             'gender', 'sex', 'race', 'ethnicity', 'age',
             'religion', 'disability', 'marital', 'nationality', 'caste'
         ]
+
         protected = []
         legitimate = []
 
@@ -142,22 +172,42 @@ Dataset columns with samples:
     def explain_quality(self, quality_result: Dict) -> Dict:
         try:
             prompt = f"""
-You are a data quality expert. Explain this result in simple terms:
+You are a data quality expert. Explain this result in simple, qualitative terms for a non-technical audience.
 
-{json.dumps(quality_result, indent=2)}
+STRICT FORMATTING RULES — follow exactly or the output will break:
+- DO NOT use any ** bold markers anywhere — not around labels, not around words, nowhere
+- DO NOT use any # heading markers — not ## Summary, not # anything
+- DO NOT add any preamble or intro sentence before the first item
+- DO NOT mention any numerical scores, percentages, or grades
+- Use ONLY qualitative language: "severe issues", "poor quality", "good quality", etc.
 
-Give:
-1. Summary (2-3 sentences)
-2. Key issues
-3. 3 actionable improvements
+Analysis findings (numerical scores redacted):
+{self._redact_scores_from_dict(quality_result)}
+
+Respond using EXACTLY this plain-text structure with no markdown whatsoever:
+
+Summary:
+2-3 plain sentences describing the overall data quality. No numbers.
+
+Key Issues:
+1. Issue name: Description of the issue and its real-world impact on data reliability.
+2. Issue name: Description of the issue and its real-world impact on data reliability.
+3. Issue name: Description of the issue and its real-world impact on data reliability.
+
+Recommended Actions:
+1. Action title: Specific concrete step to address the most critical issue.
+2. Action title: Specific concrete step to address the second issue.
+3. Action title: Specific concrete step to address the third issue.
 """
+
             explanation = self._call_gemini(prompt)
+            explanation = self._sanitize_explanation_text(explanation)
+
             return {
                 "type": "quality_explanation",
-                "grade": quality_result.get("overall_grade"),
-                "score": quality_result.get("overall_score"),
                 "explanation": explanation,
             }
+
         except Exception as e:
             return {
                 "type": "quality_explanation",
@@ -192,20 +242,40 @@ Give:
                 }
 
             prompt = f"""
-You are a fairness expert. Explain these results in simple terms:
+You are a fairness expert. Explain these audit results in simple, clear terms for a non-technical audience.
 
+CRITICAL RULES:
+- Use plain language — no jargon without explanation
+- DO NOT add any preamble, intro sentence, or conversational filler before the first heading
+- Start your response DIRECTLY with "## Summary" — no text before it
+- Use **bold** for emphasis within sentences (e.g. group names, key terms) — do NOT use bold for entire sentences
+- Do NOT wrap verdict words like UNFAIR or FAIR in double asterisks — write them plainly
+
+Findings:
 {chr(10).join(findings)}
 
-Give:
-1. Summary (2-3 sentences)
-2. Real-world impact
-3. 3 actionable recommendations
+Respond using EXACTLY this markdown structure — no deviations, no extra sections:
+
+## Summary
+2-3 sentences summarising whether the dataset is fair or biased, which attributes are affected, and what the overall verdict means in plain terms.
+
+## Real-World Impact
+1. **Group or attribute affected:** Explain in plain terms what this bias means for real people — what outcomes are affected and who is disadvantaged.
+2. **Group or attribute affected:** Explain in plain terms what this bias means for real people — what outcomes are affected and who is disadvantaged.
+
+## Recommended Actions
+1. **Action title:** Concrete step to reduce bias for the most affected group.
+2. **Action title:** Concrete step to reduce bias for the second issue.
+3. **Action title:** Concrete step to improve overall fairness of the dataset or model.
 """
+
             explanation = self._call_gemini(prompt)
+
             return {
                 "type": "fairness_explanation",
                 "explanation": explanation,
             }
+
         except Exception as e:
             return {
                 "type": "fairness_explanation",
@@ -213,110 +283,16 @@ Give:
                 "error": str(e),
             }
 
-    def generate_full_report(self, quality_result: Dict, fairness_result: Dict) -> Dict:
+    def generate_full_report(
+        self,
+        quality_result: Dict,
+        fairness_result: Dict
+    ) -> Dict:
+
         logger.info("Generating full AI explanation report")
+
         return {
             "report_type": "full_ai_explanation",
             "quality_summary": self.explain_quality(quality_result),
             "fairness_summary": self.explain_fairness(fairness_result),
         }
-
-    # ── Phase 3: Remediation plan ──────────────────────────────────────────────
-    def generate_remediation_plan(self, quality_result: Dict, fairness_result: Dict,
-                                   dataset_info: Dict) -> Dict:
-        try:
-            findings = []
-
-            outcome_column = dataset_info.get("outcome_column")
-            if outcome_column:
-                findings.append(f"Target outcome column: {outcome_column}")
-
-            if quality_result:
-                overall_score = quality_result.get("overall_score", 0)
-                findings.append(f"Overall quality score: {overall_score}/100")
-
-                scores = quality_result.get("scores", {})
-                if scores.get("completeness", 100) < 95:
-                    findings.append(
-                        f"Completeness: {scores.get('completeness')}% (missing values detected)"
-                    )
-
-            if fairness_result and fairness_result.get("results"):
-                if not outcome_column:
-                    outcome_column = fairness_result.get("outcome_attribute")
-
-                for attr, result in fairness_result["results"].items():
-                    if isinstance(result, dict):
-                        di = result.get("disparate_impact", "N/A")
-                        spd = result.get("spd", "N/A")
-                        verdict = result.get("verdict", "UNKNOWN")
-                        actual_outcome = result.get("outcome_attribute", outcome_column)
-                        findings.append(
-                            f"Fairness - {attr} vs {actual_outcome}: DI={di}, SPD={spd}, verdict={verdict}"
-                        )
-
-            if not findings:
-                return {
-                    "critical_priority": [],
-                    "high_priority": [],
-                    "medium_priority": [],
-                    "source": "no_findings"
-                }
-
-            prompt = f"""
-You are a data quality and fairness expert providing remediation guidance.
-
-Dataset Info:
-- Rows: {dataset_info.get('rows', 'unknown')}
-- Columns: {dataset_info.get('columns', 'unknown')}
-- Column names: {dataset_info.get('column_names', [])}
-- Outcome column: {outcome_column or 'not specified'}
-
-Findings:
-{chr(10).join(findings)}
-
-Generate a SPECIFIC remediation plan. Rules:
-1. Reference ACTUAL column names from this dataset
-2. Reference ACTUAL numbers from the findings
-3. Prioritize: CRITICAL (fairness violations) > HIGH (quality issues) > MEDIUM (improvements)
-4. Give concrete steps with verification
-
-Return ONLY valid JSON (no markdown, no backticks):
-
-{{
-  "critical_priority": [
-    {{
-      "issue": "specific issue with actual column name and number",
-      "fix": "concrete action to take",
-      "technique": "technique name",
-      "verification": "how to confirm it worked"
-    }}
-  ],
-  "high_priority": [],
-  "medium_priority": []
-}}
-"""
-
-            response_text = self._call_gemini(prompt)
-            json_match = re.search(r"\{.*\}", response_text, re.DOTALL)
-            if not json_match:
-                raise ValueError("No JSON in remediation response")
-
-            parsed = json.loads(json_match.group())
-
-            return {
-                "critical_priority": parsed.get("critical_priority", []),
-                "high_priority": parsed.get("high_priority", []),
-                "medium_priority": parsed.get("medium_priority", []),
-                "source": "gemini"
-            }
-
-        except Exception as e:
-            logger.error(f"Remediation plan error: {str(e)}")
-            return {
-                "critical_priority": [],
-                "high_priority": [],
-                "medium_priority": [],
-                "source": "fallback",
-                "error": str(e)
-            }

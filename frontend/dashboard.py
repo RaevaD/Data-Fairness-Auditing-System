@@ -20,6 +20,11 @@ st.markdown("""
 footer {visibility: hidden;}
 header {visibility: hidden;}
 
+/* ← ONLY CHANGE: hides Streamlit's auto-generated pages file list in the sidebar */
+[data-testid="stSidebarNav"] {
+    display: none !important;
+}
+
 html, body, [class*="css"] {
     font-family: 'Syne', sans-serif !important;
     background-color: #0d0b1e !important;
